@@ -19,7 +19,7 @@
          <children>
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                <children>
-                  <Circle fill="#ff5f56" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" />
+                  <Circle fill="#ff5f56" onMouseClicked="#handleCancelar" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" style="-fx-cursor: hand;" />
                   <Circle fill="#ffbd2e" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" />
                   <Circle fill="#27c93f" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" />
                </children>
@@ -53,10 +53,11 @@
          </padding>
       </VBox>
 
-      <!-- Botón de Confirmación -->
-      <HBox alignment="CENTER_LEFT">
+      <!-- Botón de Confirmación y Cancelación -->
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
             <Button fx:id="btnConfirmar" mnemonicParsing="false" onAction="#handleConfirmar" styleClass="btn-success" text="Confirmar" />
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#handleCancelar" styleClass="btn-slate" text="Cancelar" />
          </children>
          <padding>
             <Insets bottom="16.0" left="18.0" right="18.0" top="10.0" />

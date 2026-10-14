@@ -1,6 +1,7 @@
 package com.sira.controller;
 
 import com.sira.model.Animal;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -68,9 +69,41 @@ public class MainController implements Initializable {
                 actualizarResumen(newVal);
             }
         });
+
+        // Doble clic en una fila abre la ficha del animal
+        tablaAnimales.setRowFactory(tv -> {
+            TableRow<Animal> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    handleAbrirFicha(null);
+                }
+            });
+            return row;
+        });
+
+        // Búsqueda en tiempo real
+        if (txtBuscar != null) {
+            txtBuscar.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal == null || newVal.trim().isEmpty()) {
+                    tablaAnimales.setItems(listaAnimales);
+                } else {
+                    String query = newVal.toLowerCase().trim();
+                    ObservableList<Animal> filtrados = listaAnimales.filtered(a ->
+                            a.getNombre().toLowerCase().contains(query) ||
+                            a.getEspecie().toLowerCase().contains(query) ||
+                            a.getEstado().toLowerCase().contains(query)
+                    );
+                    tablaAnimales.setItems(filtrados);
+                }
+                if (!tablaAnimales.getItems().isEmpty()) {
+                    tablaAnimales.getSelectionModel().selectFirst();
+                }
+            });
+        }
     }
 
     private void actualizarResumen(Animal animal) {
+        if (animal == null) return;
         lblResumenTitulo.setText("Resumen del seleccionado");
         lblResumenSub.setText(animal.getNombre() + " · " + animal.getEspecie() + " · " + animal.getSexo());
         lblResumenFecha.setText("Ingreso " + animal.getFechaIngreso());
@@ -98,6 +131,12 @@ public class MainController implements Initializable {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.showAndWait();
+
+            // Refrescar tabla y resumen tras cerrar la ficha
+            tablaAnimales.refresh();
+            if (seleccionado != null) {
+                actualizarResumen(seleccionado);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -124,6 +163,12 @@ public class MainController implements Initializable {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.showAndWait();
+
+            // Refrescar tabla y resumen tras confirmar la adopción
+            tablaAnimales.refresh();
+            if (seleccionado != null) {
+                actualizarResumen(seleccionado);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -131,7 +176,10 @@ public class MainController implements Initializable {
 
     @FXML
     public void handleNuevo(ActionEvent event) {
-        // Sin funcionalidad de persistencia según especificación
+        Animal nuevo = new Animal("Nuevo", "Perro", "EN_REFUGIO", "hembra", "14/10/2026");
+        listaAnimales.add(nuevo);
+        tablaAnimales.getSelectionModel().select(nuevo);
+        handleAbrirFicha(event);
     }
 
     @FXML
@@ -141,6 +189,19 @@ public class MainController implements Initializable {
 
     @FXML
     public void handleRefrescar(ActionEvent event) {
+        if (txtBuscar != null) {
+            txtBuscar.clear();
+        }
+        tablaAnimales.setItems(listaAnimales);
         tablaAnimales.refresh();
+        if (!listaAnimales.isEmpty()) {
+            tablaAnimales.getSelectionModel().selectFirst();
+            actualizarResumen(listaAnimales.get(0));
+        }
+    }
+
+    @FXML
+    public void handleSalir() {
+        Platform.exit();
     }
 }

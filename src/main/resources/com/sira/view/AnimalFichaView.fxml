@@ -21,7 +21,7 @@
          <children>
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                <children>
-                  <Circle fill="#ff5f56" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" />
+                  <Circle fill="#ff5f56" onMouseClicked="#handleCerrar" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" style="-fx-cursor: hand;" />
                   <Circle fill="#ffbd2e" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" />
                   <Circle fill="#27c93f" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" />
                </children>
@@ -91,11 +91,12 @@
       </VBox>
 
       <!-- Botones de Acción Inferiores -->
-      <HBox alignment="CENTER_LEFT" spacing="12.0">
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
             <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#handleGuardar" styleClass="btn-success" text="Guardar" />
             <Button fx:id="btnDeshacer" mnemonicParsing="false" onAction="#handleDeshacer" styleClass="btn-warning" text="Deshacer" />
             <Button fx:id="btnCerrar" mnemonicParsing="false" onAction="#handleCerrar" styleClass="btn-slate" text="Cerrar" />
+            <Button fx:id="btnNuevaAdopcion" mnemonicParsing="false" onAction="#handleAbrirAdopcion" styleClass="btn-dark" text="Nueva adopción" />
          </children>
          <padding>
             <Insets bottom="16.0" left="18.0" right="18.0" top="6.0" />

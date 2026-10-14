@@ -17,6 +17,7 @@ public class AdopcionFormController implements Initializable {
     @FXML private Label lblInfoAnimal;
     @FXML private TextField txtAdoptante;
     @FXML private Button btnConfirmar;
+    @FXML private Button btnCancelar;
 
     private Animal animal;
 
@@ -39,7 +40,23 @@ public class AdopcionFormController implements Initializable {
 
     @FXML
     public void handleConfirmar(ActionEvent event) {
+        if (animal != null) {
+            animal.setEstado("ADOPTADO");
+        }
         Stage stage = (Stage) btnConfirmar.getScene().getWindow();
+        stage.close();
+    }
+
+    @FXML
+    public void handleCancelar(ActionEvent event) {
+        Stage stage;
+        if (btnCancelar != null && btnCancelar.getScene() != null) {
+            stage = (Stage) btnCancelar.getScene().getWindow();
+        } else if (btnConfirmar != null && btnConfirmar.getScene() != null) {
+            stage = (Stage) btnConfirmar.getScene().getWindow();
+        } else {
+            return;
+        }
         stage.close();
     }
 }

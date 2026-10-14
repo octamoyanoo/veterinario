@@ -25,7 +25,7 @@
          <children>
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                <children>
-                  <Circle fill="#ff5f56" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" />
+                  <Circle fill="#ff5f56" onMouseClicked="#handleSalir" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" style="-fx-cursor: hand;" />
                   <Circle fill="#ffbd2e" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" />
                   <Circle fill="#27c93f" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" />
                </children>
@@ -43,12 +43,12 @@
         <menus>
           <Menu mnemonicParsing="false" text="Archivo">
             <items>
-              <MenuItem mnemonicParsing="false" text="Salir" />
+              <MenuItem mnemonicParsing="false" onAction="#handleSalir" text="Salir" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Animales">
             <items>
-              <MenuItem mnemonicParsing="false" text="Listar" />
+              <MenuItem mnemonicParsing="false" onAction="#handleRefrescar" text="Listar" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Personas">
@@ -58,12 +58,12 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Adopciones">
             <items>
-              <MenuItem mnemonicParsing="false" text="Nueva adopción" />
+              <MenuItem mnemonicParsing="false" onAction="#handleNuevaAdopcion" text="Nueva adopción" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Veterinaria">
             <items>
-              <MenuItem mnemonicParsing="false" text="Historial clínico" />
+              <MenuItem mnemonicParsing="false" onAction="#handleAbrirFicha" text="Historial clínico" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Donaciones">

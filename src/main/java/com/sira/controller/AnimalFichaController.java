@@ -68,7 +68,13 @@ public class AnimalFichaController implements Initializable {
 
     @FXML
     public void handleGuardar(ActionEvent event) {
-        // Sin lógica de persistencia según especificación
+        if (animalActual != null) {
+            animalActual.setNombre(txtNombre.getText());
+            animalActual.setEspecie(txtEspecie.getText());
+            animalActual.setEstado(txtEstado.getText());
+        }
+        Stage stage = (Stage) btnGuardar.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
