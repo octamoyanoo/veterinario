@@ -30,14 +30,6 @@ Las vistas se encuentran en: `src/main/resources/com/sira/view/`
 
 ---
 
-## 🎨 Estilos y Diseño (CSS)
-
-- Todos los estilos de colores, cabeceras en azul marino, filas alternadas de tablas y esquinas redondeadas están centralizados en:  
-  `src/main/resources/com/sira/css/styles.css`.
-- Los archivos FXML vinculan automáticamente este archivo CSS para que se vean idénticos dentro de Scene Builder.
-
----
-
 ## 🛠️ Cómo abrir en Scene Builder
 
 1. Iniciar **Scene Builder** (por ejemplo ejecutando `iniciar_scenebuilder.bat`).
@@ -46,16 +38,3 @@ Las vistas se encuentran en: `src/main/resources/com/sira/view/`
    - `MainView.fxml`
    - `AnimalFichaView.fxml`
    - `AdopcionFormView.fxml`
-
----
-
-## 🚀 Cómo ejecutar el proyecto
-
-Desde NetBeans:
-- Abrir la carpeta `veterinario` como proyecto Maven.
-- Ejecutar el proyecto con `Run` (o `mvn javafx:run`).
-
-Desde consola con Maven:
-```powershell
-mvn javafx:run
-```
