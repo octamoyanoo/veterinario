@@ -1,6 +1,7 @@
 package com.sira.controller;
 
 import com.sira.model.Animal;
+import com.sira.model.Datos;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +18,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -27,6 +29,7 @@ public class MainController implements Initializable {
     @FXML private TableColumn<Animal, String> colEstado;
 
     @FXML private TextField txtBuscar;
+    @FXML private Button btnBuscar;
     @FXML private Button btnNuevo;
     @FXML private Button btnEditar;
     @FXML private Button btnRefrescar;
@@ -43,27 +46,22 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Configurar columnas de la tabla
+        // Configurar columnas de la tabla vinculadas a la Entidad Animal
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colEspecie.setCellValueFactory(new PropertyValueFactory<>("especie"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
 
-        // Datos iniciales exactamente como en la imagen
-        listaAnimales = FXCollections.observableArrayList(
-                new Animal("Luna", "Perro", "EN_REFUGIO", "hembra", "12/08/2026"),
-                new Animal("Mora", "Gato", "EN_TRATAMIENTO", "hembra", "01/09/2026"),
-                new Animal("Otto", "Perro", "RESERVADO", "macho", "15/07/2026"),
-                new Animal("Pipa", "Gato", "ADOPTADO", "hembra", "10/06/2026"),
-                new Animal("Roco", "Perro", "EN_REFUGIO", "macho", "20/08/2026")
-        );
-
+        // Cargar datos en memoria desde Datos.java usando Datos.listar()
+        listaAnimales = FXCollections.observableArrayList(Datos.listar());
         tablaAnimales.setItems(listaAnimales);
 
-        // Seleccionar Luna por defecto
-        tablaAnimales.getSelectionModel().selectFirst();
-        actualizarResumen(listaAnimales.get(0));
+        // Seleccionar el primer registro por defecto si existe
+        if (!listaAnimales.isEmpty()) {
+            tablaAnimales.getSelectionModel().selectFirst();
+            actualizarResumen(listaAnimales.get(0));
+        }
 
-        // Listener de selección
+        // Listener de cambio de selección en la tabla
         tablaAnimales.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 actualizarResumen(newVal);
@@ -81,51 +79,114 @@ public class MainController implements Initializable {
             return row;
         });
 
-        // Búsqueda en tiempo real
+        // Búsqueda en tiempo real que invoca el método Datos.buscar(...)
         if (txtBuscar != null) {
             txtBuscar.textProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal == null || newVal.trim().isEmpty()) {
-                    tablaAnimales.setItems(listaAnimales);
-                } else {
-                    String query = newVal.toLowerCase().trim();
-                    ObservableList<Animal> filtrados = listaAnimales.filtered(a ->
-                            a.getNombre().toLowerCase().contains(query) ||
-                            a.getEspecie().toLowerCase().contains(query) ||
-                            a.getEstado().toLowerCase().contains(query)
-                    );
-                    tablaAnimales.setItems(filtrados);
-                }
-                if (!tablaAnimales.getItems().isEmpty()) {
-                    tablaAnimales.getSelectionModel().selectFirst();
-                }
+                ejecutarBusqueda(newVal);
             });
         }
     }
 
+    private void ejecutarBusqueda(String criterio) {
+        List<Animal> encontrados = Datos.buscar(criterio);
+        listaAnimales.setAll(encontrados);
+
+        if (!listaAnimales.isEmpty()) {
+            tablaAnimales.getSelectionModel().selectFirst();
+            actualizarResumen(listaAnimales.get(0));
+        } else {
+            limpiarResumen();
+        }
+    }
+
     private void actualizarResumen(Animal animal) {
-        if (animal == null) return;
+        if (animal == null) {
+            limpiarResumen();
+            return;
+        }
         lblResumenTitulo.setText("Resumen del seleccionado");
         lblResumenSub.setText(animal.getNombre() + " · " + animal.getEspecie() + " · " + animal.getSexo());
         lblResumenFecha.setText("Ingreso " + animal.getFechaIngreso());
         lblResumenEstado.setText("Estado " + animal.getEstado());
     }
 
+    private void limpiarResumen() {
+        lblResumenTitulo.setText("Sin selección");
+        lblResumenSub.setText("No se encontraron animales");
+        lblResumenFecha.setText("");
+        lblResumenEstado.setText("");
+    }
+
     @FXML
-    public void handleAbrirFicha(ActionEvent event) {
+    public void handleBuscar(ActionEvent event) {
+        String query = txtBuscar != null ? txtBuscar.getText() : "";
+        ejecutarBusqueda(query);
+    }
+
+    @FXML
+    public void handleNuevo(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/sira/view/AnimalFichaView.fxml"));
             Parent root = loader.load();
 
             AnimalFichaController controller = loader.getController();
-            Animal seleccionado = tablaAnimales.getSelectionModel().getSelectedItem();
-            if (seleccionado != null) {
-                controller.setAnimal(seleccionado);
+            // Modo nuevo: campos limpios para ingresar datos
+            controller.setModoNuevo(true);
+
+            Stage stage = new Stage();
+            stage.setTitle("Nuevo Animal (Formulario)");
+            stage.initModality(Modality.WINDOW_MODAL);
+            Stage principal = (Stage) btnNuevo.getScene().getWindow();
+            stage.initOwner(principal);
+
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.showAndWait();
+
+            // Si se agregó un nuevo objeto a Datos.java, refrescar la tabla y seleccionarlo
+            Animal nuevoGuardado = controller.getAnimalGuardado();
+            if (nuevoGuardado != null) {
+                if (txtBuscar != null) {
+                    txtBuscar.clear();
+                }
+                listaAnimales.setAll(Datos.listar());
+                tablaAnimales.refresh();
+                tablaAnimales.getSelectionModel().select(nuevoGuardado);
+                actualizarResumen(nuevoGuardado);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void handleEditar(ActionEvent event) {
+        handleAbrirFicha(event);
+    }
+
+    @FXML
+    public void handleAbrirFicha(ActionEvent event) {
+        try {
+            Animal seleccionado = tablaAnimales.getSelectionModel().getSelectedItem();
+            if (seleccionado == null) {
+                if (!listaAnimales.isEmpty()) {
+                    seleccionado = listaAnimales.get(0);
+                    tablaAnimales.getSelectionModel().select(seleccionado);
+                } else {
+                    return;
+                }
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/sira/view/AnimalFichaView.fxml"));
+            Parent root = loader.load();
+
+            AnimalFichaController controller = loader.getController();
+            controller.setAnimal(seleccionado);
 
             Stage stage = new Stage();
             stage.setTitle("Ficha animal modal");
             stage.initModality(Modality.WINDOW_MODAL);
-            Stage principal = (Stage) btnAbrirFicha.getScene().getWindow();
+            Stage principal = (Stage) btnNuevo.getScene().getWindow();
             stage.initOwner(principal);
 
             Scene scene = new Scene(root);
@@ -133,8 +194,12 @@ public class MainController implements Initializable {
             stage.showAndWait();
 
             // Refrescar tabla y resumen tras cerrar la ficha
+            listaAnimales.setAll(Datos.listar());
             tablaAnimales.refresh();
-            if (seleccionado != null) {
+            if (controller.getAnimalGuardado() != null) {
+                tablaAnimales.getSelectionModel().select(controller.getAnimalGuardado());
+                actualizarResumen(controller.getAnimalGuardado());
+            } else if (seleccionado != null) {
                 actualizarResumen(seleccionado);
             }
         } catch (IOException e) {
@@ -165,6 +230,7 @@ public class MainController implements Initializable {
             stage.showAndWait();
 
             // Refrescar tabla y resumen tras confirmar la adopción
+            listaAnimales.setAll(Datos.listar());
             tablaAnimales.refresh();
             if (seleccionado != null) {
                 actualizarResumen(seleccionado);
@@ -175,28 +241,17 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void handleNuevo(ActionEvent event) {
-        Animal nuevo = new Animal("Nuevo", "Perro", "EN_REFUGIO", "hembra", "14/10/2026");
-        listaAnimales.add(nuevo);
-        tablaAnimales.getSelectionModel().select(nuevo);
-        handleAbrirFicha(event);
-    }
-
-    @FXML
-    public void handleEditar(ActionEvent event) {
-        handleAbrirFicha(event);
-    }
-
-    @FXML
     public void handleRefrescar(ActionEvent event) {
         if (txtBuscar != null) {
             txtBuscar.clear();
         }
-        tablaAnimales.setItems(listaAnimales);
+        listaAnimales.setAll(Datos.listar());
         tablaAnimales.refresh();
         if (!listaAnimales.isEmpty()) {
             tablaAnimales.getSelectionModel().selectFirst();
             actualizarResumen(listaAnimales.get(0));
+        } else {
+            limpiarResumen();
         }
     }
 

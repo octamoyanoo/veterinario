@@ -1,6 +1,10 @@
 package com.sira.model;
 
+/**
+ * Clase Entidad que representa a un Animal / Paciente de la Veterinaria.
+ */
 public class Animal {
+    private String codigo;
     private String nombre;
     private String especie;
     private String estado;
@@ -11,6 +15,7 @@ public class Animal {
     }
 
     public Animal(String nombre, String especie, String estado) {
+        this.codigo = "";
         this.nombre = nombre;
         this.especie = especie;
         this.estado = estado;
@@ -19,11 +24,29 @@ public class Animal {
     }
 
     public Animal(String nombre, String especie, String estado, String sexo, String fechaIngreso) {
+        this.codigo = "";
         this.nombre = nombre;
         this.especie = especie;
         this.estado = estado;
         this.sexo = sexo;
         this.fechaIngreso = fechaIngreso;
+    }
+
+    public Animal(String codigo, String nombre, String especie, String estado, String sexo, String fechaIngreso) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.especie = especie;
+        this.estado = estado;
+        this.sexo = sexo;
+        this.fechaIngreso = fechaIngreso;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public String getNombre() {
@@ -64,5 +87,17 @@ public class Animal {
 
     public void setFechaIngreso(String fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
+    }
+
+    @Override
+    public String toString() {
+        return "Animal{" +
+                "codigo='" + codigo + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", especie='" + especie + '\'' +
+                ", estado='" + estado + '\'' +
+                ", sexo='" + sexo + '\'' +
+                ", fechaIngreso='" + fechaIngreso + '\'' +
+                '}';
     }
 }

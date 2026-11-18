@@ -48,7 +48,8 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Animales">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#handleRefrescar" text="Listar" />
+              <MenuItem mnemonicParsing="false" onAction="#handleNuevo" text="Nuevo animal" />
+              <MenuItem mnemonicParsing="false" onAction="#handleRefrescar" text="Listar todos" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Personas">
@@ -97,9 +98,10 @@
       </HBox>
 
       <!-- Campo de Búsqueda -->
-      <HBox alignment="CENTER_LEFT">
+      <HBox alignment="CENTER_LEFT" spacing="8.0">
          <children>
-            <TextField fx:id="txtBuscar" prefWidth="220.0" promptText="Buscar animal..." styleClass="search-field" />
+            <TextField fx:id="txtBuscar" prefWidth="250.0" promptText="Buscar por nombre, código o especie..." styleClass="search-field" />
+            <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#handleBuscar" styleClass="btn-secondary" text="Buscar" />
          </children>
          <padding>
             <Insets bottom="10.0" left="14.0" right="14.0" top="2.0" />

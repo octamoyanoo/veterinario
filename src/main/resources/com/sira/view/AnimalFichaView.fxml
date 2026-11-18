@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<VBox prefHeight="550.0" prefWidth="480.0" spacing="12.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sira.controller.AnimalFichaController">
+<VBox prefHeight="580.0" prefWidth="480.0" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sira.controller.AnimalFichaController">
    <stylesheets>
       <URL value="@../css/styles.css" />
    </stylesheets>
@@ -26,7 +26,7 @@
                   <Circle fill="#27c93f" radius="5.5" stroke="TRANSPARENT" strokeType="INSIDE" />
                </children>
             </HBox>
-            <Label styleClass="window-title" text="Ficha animal   modal" />
+            <Label fx:id="lblTituloVentana" styleClass="window-title" text="Ficha animal   modal" />
          </children>
          <padding>
             <Insets bottom="8.0" left="12.0" right="12.0" top="8.0" />
@@ -36,35 +36,57 @@
       <!-- Subtítulo / Metadata del FXML -->
       <VBox spacing="2.0">
          <children>
-            <Label styleClass="modal-header-tag" text="AnimalFichaView.fxml" />
-            <Label styleClass="modal-header-desc" text="Recibe: Animal luna + callback" />
+            <Label fx:id="lblHeaderTag" styleClass="modal-header-tag" text="AnimalFichaView.fxml" />
+            <Label fx:id="lblHeaderDesc" styleClass="modal-header-desc" text="Recibe: Animal + callback" />
          </children>
          <padding>
-            <Insets left="18.0" right="18.0" top="4.0" />
+            <Insets left="18.0" right="18.0" top="2.0" />
+         </padding>
+      </VBox>
+
+      <!-- Mensaje general de error (visible si faltan datos críticos) -->
+      <VBox>
+         <children>
+            <Label fx:id="lblMensajeError" managed="false" styleClass="banner-error" text="¡Atención! Falta ingresar datos críticos obligatorios." visible="false" />
+         </children>
+         <padding>
+            <Insets left="18.0" right="18.0" />
          </padding>
       </VBox>
 
       <!-- Campos de Formulario -->
       <VBox spacing="8.0">
          <children>
-            <VBox spacing="3.0">
+            <VBox spacing="2.0">
                <children>
-                  <Label styleClass="form-label" text="Nombre" />
-                  <TextField fx:id="txtNombre" text="Luna" />
+                  <Label styleClass="form-label" text="Nombre (* dato crítico)" />
+                  <TextField fx:id="txtNombre" promptText="Nombre del animal" />
+                  <Label fx:id="lblErrorNombre" managed="false" styleClass="label-error" text="* Falta ingresar el Nombre (dato crítico obligatorio)" visible="false" />
                </children>
             </VBox>
-            <VBox spacing="3.0">
+            <VBox spacing="2.0">
                <children>
-                  <Label styleClass="form-label" text="Especie" />
-                  <TextField fx:id="txtEspecie" text="Perro" />
+                  <Label styleClass="form-label" text="Especie (* dato crítico)" />
+                  <TextField fx:id="txtEspecie" promptText="Perro, Gato, etc." />
+                  <Label fx:id="lblErrorEspecie" managed="false" styleClass="label-error" text="* Falta ingresar la Especie (dato crítico obligatorio)" visible="false" />
                </children>
             </VBox>
-            <VBox spacing="3.0">
+            <HBox spacing="10.0">
                <children>
-                  <Label styleClass="form-label" text="Estado" />
-                  <TextField fx:id="txtEstado" text="EN_REFUGIO" />
+                  <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="form-label" text="Estado" />
+                        <TextField fx:id="txtEstado" promptText="EN_REFUGIO, EN_TRATAMIENTO, ADOPTADO..." text="EN_REFUGIO" />
+                     </children>
+                  </VBox>
+                  <VBox prefWidth="140.0" spacing="2.0">
+                     <children>
+                        <Label styleClass="form-label" text="Sexo" />
+                        <TextField fx:id="txtSexo" promptText="hembra / macho" text="hembra" />
+                     </children>
+                  </VBox>
                </children>
-            </VBox>
+            </HBox>
          </children>
          <padding>
             <Insets left="18.0" right="18.0" />
@@ -72,10 +94,10 @@
       </VBox>
 
       <!-- Sección Historial Clínico -->
-      <VBox spacing="6.0" VBox.vgrow="ALWAYS">
+      <VBox fx:id="seccionHistorial" spacing="6.0" VBox.vgrow="ALWAYS">
          <children>
             <Label styleClass="card-title" text="Historial clínico (lista enlazada)" />
-            <TableView fx:id="tablaHistorial" prefHeight="140.0" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tablaHistorial" prefHeight="130.0" VBox.vgrow="ALWAYS">
               <columns>
                 <TableColumn fx:id="colFecha" prefWidth="180.0" text="Fecha" />
                 <TableColumn fx:id="colTipo" prefWidth="240.0" text="Tipo" />
